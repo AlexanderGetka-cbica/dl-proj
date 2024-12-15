@@ -13,7 +13,7 @@ from einops import rearrange
 import os
 print(os.getcwd())
 
-os.chdir(..)
+os.chdir('..')
 print(os.getcwd())
 
 
