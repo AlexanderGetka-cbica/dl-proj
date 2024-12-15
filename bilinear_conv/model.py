@@ -12,6 +12,11 @@ from einops import rearrange
 
 import os
 print(os.getcwd())
+
+os.chdir(..)
+print(os.getcwd())
+
+
 from shared.components import Linear, Bilinear
 
 def _collator(transform=None):
