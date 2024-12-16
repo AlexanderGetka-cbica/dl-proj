@@ -109,19 +109,21 @@ class BilinearCNN(nn.Module):
         final_channels = base_channels
         hidden_dim = final_channels * final_size * final_size
         
+        self.fc1 = nn.Linear(hidden_dim, hidden_dim, bias=bias)
         # Here the bilinear layer acts as the "activation function" replacement
         self.bilinear = Bilinear(hidden_dim, hidden_dim, bias=bias, gate=gate)
 
         # Finally, a linear classifier on top
-        self.fc = nn.Linear(hidden_dim, num_classes, bias=bias)
+        self.fc2 = nn.Linear(hidden_dim, num_classes, bias=bias)
 
     def forward(self, x: Tensor) -> Tensor:
         x = self.conv(x)
         x = self.bn(x)
         x = self.pool(x)
         x = x.flatten(start_dim=1)
+        x = self.fc1(x)
         x = self.bilinear(x)
-        x = self.fc(x)
+        x = self.fc2(x)
         return x
 
 ###################################################################
@@ -210,9 +212,9 @@ def train_model(config, train_dataset, test_dataset):
        base_channels=config['base_channels'],
        num_classes=10,
        bias=False,
-       gate='gelu'
+       gate=None
    ).to(device)
-   
+ 
    optimizer = AdamW(
        model.parameters(),
        lr=config['learning_rate'],
